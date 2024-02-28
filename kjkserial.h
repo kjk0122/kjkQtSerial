@@ -1,5 +1,3 @@
-// kjkserial.h
-
 #ifndef KJKSERIAL_H
 #define KJKSERIAL_H
 

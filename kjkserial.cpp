@@ -1,5 +1,3 @@
-// kjkserial.cpp
-
 #include "kjkserial.h"
 #include "ui_kjkserial.h"
 
@@ -29,7 +27,6 @@ void Kjkserial::on_connectButton_clicked()
         serial->setDataBits(QSerialPort::Data8);
         serial->setParity(QSerialPort::NoParity);
         serial->setStopBits(QSerialPort::OneStop);
-
         if (serial->open(QIODevice::ReadWrite)) {
             ui->connectButton->setText("Disconnect");
         }
