@@ -12,11 +12,13 @@ TARGET = kjkserial
 TEMPLATE = app
 
 SOURCES += \
+    logger.cpp \
     main.cpp \
     kjkserial.cpp
 
 HEADERS += \
-    kjkserial.h
+    kjkserial.h \
+    logger.h
 
 FORMS += \
     kjkserial.ui
