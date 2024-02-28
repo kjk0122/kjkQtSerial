@@ -1,19 +1,22 @@
 #ifndef LOGGER_H
 #define LOGGER_H
 
-#include <fstream>
+#include <QFile>
+#include <QTextStream>
 #include <QString>
 
 class Logger {
 public:
-    Logger(const QString& filename);
+    Logger(const QString& baseFilename);
     ~Logger();
-
+    //메세지 변수
     void logMessage(const QString& message);
+    void updateConnection(const QString& newBaseFilename);
 
 private:
-    std::ofstream outputFile;
-    int logFileNumber;
+    QFile outputFile;
+    QTextStream textStream;
+    QString currentBaseFilename;
 };
 
-#endif // LOGGER_H
+#endif

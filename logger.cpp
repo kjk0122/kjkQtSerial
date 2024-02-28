@@ -1,25 +1,46 @@
 #include "Logger.h"
 #include <QDateTime>
+#include <QDebug>
 
-Logger::Logger(const QString& baseFilename) : logFileNumber(1) {
-    QString filename = baseFilename + "_" + QString::number(logFileNumber) + ".txt";
-    outputFile.open(filename.toStdString(), std::ios::app); // Open file in append mode
+Logger::Logger(const QString& baseFilename) : currentBaseFilename(baseFilename) {
+
+    QString filename = currentBaseFilename + ".txt";
+    outputFile.setFileName(filename);
+
+    if (outputFile.open(QIODevice::Append | QIODevice::Text)) {
+        textStream.setDevice(&outputFile);
+    } else {
+        qDebug() << "Failed to open log file" << filename;
+    }
 }
 
 Logger::~Logger() {
-    if (outputFile.is_open()) {
-        outputFile.close(); // Close the file
-    }
+    outputFile.close();
 }
 
 void Logger::logMessage(const QString& message) {
-    if (outputFile.is_open()) {
-        // Get current date and time
+    if (outputFile.isOpen()) {
+        //시간기록
         QDateTime currentDateTime = QDateTime::currentDateTime();
         QString timestamp = currentDateTime.toString("yyyy-MM-dd hh:mm:ss");
-
-        // Log message with timestamp
-        outputFile << "[" << timestamp.toStdString() << "] " << message.toStdString() << std::endl;
-
+        textStream << "[" << timestamp << "] " << message << Qt::endl;
+        textStream.flush();
     }
 }
+
+void Logger::updateConnection(const QString& newBaseFilename) {
+    if (newBaseFilename != currentBaseFilename) {
+        currentBaseFilename = newBaseFilename;
+
+        outputFile.close();
+        QString filename = currentBaseFilename + ".txt";
+        outputFile.setFileName(filename);
+
+        if (!outputFile.open(QIODevice::Append | QIODevice::Text)) {
+            qDebug() << "Failed to open log file" << filename;
+        }
+
+        textStream.setDevice(&outputFile);
+    }
+}
+
