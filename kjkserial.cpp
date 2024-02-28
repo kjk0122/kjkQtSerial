@@ -1,6 +1,7 @@
 #include "kjkserial.h"
 #include "ui_kjkserial.h"
 #include "logger.h"
+#include <QTextCursor>
 
 Kjkserial::Kjkserial(QWidget *parent)
     : QMainWindow(parent),
@@ -19,7 +20,7 @@ Kjkserial::~Kjkserial()
 
 void Kjkserial::on_connectButton_clicked()
 {
-    Logger logger("debug_log"); // Specify the file name
+    Logger logger("debug_log");
 
     if (serial->isOpen()) {
         serial->close();
@@ -53,5 +54,19 @@ void Kjkserial::on_sendButton_clicked()
 void Kjkserial::on_readyRead()
 {
     QByteArray data = serial->readAll();
-    // Process received data as needed
+    QString receivedData = QString(data);
+
+    // Log the entire received data
+    Logger logger("value");
+    logger.logMessage(receivedData);
+
+    // Split the received data based on newline characters
+    QStringList messages = receivedData.split("\n", Qt::SkipEmptyParts);
+
+    // Display the last received message
+    if (!messages.isEmpty()) {
+        ui->numberGet->setText(messages.last());
+    }
 }
+
+
