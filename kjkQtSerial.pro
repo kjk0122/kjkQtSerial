@@ -1,4 +1,4 @@
-QT       += core gui serialport
+QT       += core gui serialport sql
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -14,11 +14,14 @@ TEMPLATE = app
 SOURCES += \
     logger.cpp \
     main.cpp \
-    kjkserial.cpp
+    kjkserial.cpp \
+    sqlite.cpp
 
 HEADERS += \
     kjkserial.h \
-    logger.h
+    logger.h \
+    sql.h \
+    sqlite.h
 
 FORMS += \
     kjkserial.ui
