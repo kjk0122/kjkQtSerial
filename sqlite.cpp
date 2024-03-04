@@ -4,7 +4,7 @@ Sqlite::Sqlite(QObject* parent)
     : QObject(parent)
 {
     if (!openDatabase()) {
-        // Handle database opening failure if needed
+
     }
 }
 
@@ -16,7 +16,7 @@ Sqlite::~Sqlite()
 bool Sqlite::openDatabase()
 {
     m_database = QSqlDatabase::addDatabase("QSQLITE");
-    m_database.setDatabaseName("C:/Users/user/Documents/kjkQtSerial/kjkultra.db");  // db 지정해줘야함
+    m_database.setDatabaseName("C:/Users/user/Documents/kjkQtSerial/kjkultra.db");  // db 지정해줌
 
     if (!m_database.open()) {
         qDebug() << "Failed to open database:" << m_database.lastError().text();

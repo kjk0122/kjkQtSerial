@@ -90,7 +90,16 @@ void Kjkserial::on_readyRead()
     if (!messages.isEmpty()) {
         ui->numberGet->setText(messages.last());
 
-        // 수신된 데이터에 대한 로그를 데이터베이스에 추가
-        sqlite->logMessage("Received data: " + messages.last(), 0, "");
+        qint64 distance = messages.last().toLongLong();
+
+        // distance의 값에 따라서 alarm 설정
+        QString alarm;
+        if (distance <= 15) {
+            alarm = "접근";
+        }
+
+        // 수신된 데이터에 대한 로그 및 alarm 로그를 데이터베이스에 추가
+        sqlite->logMessage("Received data: " + messages.last(), distance, alarm);
     }
 }
+
