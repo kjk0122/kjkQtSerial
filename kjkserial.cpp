@@ -1,13 +1,17 @@
 #include "kjkserial.h"
 #include "ui_kjkserial.h"
 #include "logger.h"
+#include "sqlite.h"
+
 #include <QTextCursor>
 #include <QSerialPortInfo>
 
 Kjkserial::Kjkserial(QWidget *parent)
     : QMainWindow(parent),
     ui(new Ui::Kjkserial),
-    serial(new QSerialPort(this))
+    serial(new QSerialPort(this)),
+    logger("Connection_log"),  // logger 변수를 생성자에서 초기화
+    sqlite(new Sqlite(this))  // sqlite 변수를 생성자에서 초기화
 {
     ui->setupUi(this);
 
@@ -28,6 +32,9 @@ void Kjkserial::on_connectButton_clicked() {
         ui->connectButton->setText("Connect");
         logger.logMessage("Disconnected");
         qDebug() << "Disconnected";
+
+        // 연결 해제 로그를 데이터베이스에 추가
+        sqlite->logMessage("Disconnected", 0, "");
     } else {
         // 아두이노에 꽂은 시리얼 포트 목록 가져오기
         QString targetPortName = "Arduino";
@@ -50,6 +57,9 @@ void Kjkserial::on_connectButton_clicked() {
             logger.logMessage("Connected to " + portName);
             qDebug() << "Connected to" << portName;
 
+            // 연결 로그를 데이터베이스에 추가
+            sqlite->logMessage("Connected to " + portName, 0, "");
+
             if (serial->open(QIODevice::ReadWrite)) {
                 ui->connectButton->setText("Disconnect");
             } else {
@@ -58,6 +68,9 @@ void Kjkserial::on_connectButton_clicked() {
         } else {
             qDebug() << "Target port not found";
             logger.logMessage("Target port not found");
+
+            // 연결 실패 로그를 데이터베이스에 추가
+            sqlite->logMessage("Target port not found", 0, "");
         }
     }
 }
@@ -76,7 +89,8 @@ void Kjkserial::on_readyRead()
     // text에 보이는 방식은 갱신 형식으로
     if (!messages.isEmpty()) {
         ui->numberGet->setText(messages.last());
+
+        // 수신된 데이터에 대한 로그를 데이터베이스에 추가
+        sqlite->logMessage("Received data: " + messages.last(), 0, "");
     }
 }
-
-
