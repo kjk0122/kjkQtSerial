@@ -11,17 +11,15 @@ class Sqlite : public QObject
     Q_OBJECT
 
 public:
-    explicit Sqlite(QObject* parent = nullptr);
+    Sqlite(QObject* parent = nullptr);
     ~Sqlite();
-
-public slots:
-    void logMessage(const QString& message);
-
-private:
-    QSqlDatabase m_database;
 
     bool openDatabase();
     void closeDatabase();
+    void logMessage(const QString& message, qint64 distance, const QString& alarm);
+
+private:
+    QSqlDatabase m_database;
 };
 
 #endif

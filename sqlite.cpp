@@ -16,16 +16,15 @@ Sqlite::~Sqlite()
 bool Sqlite::openDatabase()
 {
     m_database = QSqlDatabase::addDatabase("QSQLITE");
-    m_database.setDatabaseName("C:/Users/user/Documents/kjkQtSerial/kjktest.db");  // SQLite database file name
+    m_database.setDatabaseName("C:/Users/user/Documents/kjkQtSerial/kjkultra.db");  // db 지정해줘야함
 
     if (!m_database.open()) {
         qDebug() << "Failed to open database:" << m_database.lastError().text();
         return false;
     }
-
-    // Assuming you have a "logs" table in your database with columns "timestamp" and "message"
+    //QSL테이블 생성해주기
     QSqlQuery query(m_database);
-    query.exec("CREATE TABLE IF NOT EXISTS logs (timestamp DATETIME, message TEXT)");
+    query.exec("CREATE TABLE IF NOT EXISTS LOG (timestamp DATETIME, distance INTEGER, alarm TEXT)");
 
     return true;
 }
@@ -38,7 +37,7 @@ void Sqlite::closeDatabase()
     }
 }
 
-void Sqlite::logMessage(const QString& message)
+void Sqlite::logMessage(const QString& message, qint64 distance, const QString& alarm)
 {
     if (!m_database.isOpen()) {
         if (!openDatabase()) {
@@ -51,9 +50,10 @@ void Sqlite::logMessage(const QString& message)
     QString timestamp = currentDateTime.toString("yyyy-MM-dd hh:mm:ss");
 
     QSqlQuery query(m_database);
-    query.prepare("INSERT INTO logs (timestamp, message) VALUES (:timestamp, :message)");
+    query.prepare("INSERT INTO LOG (timestamp, distance, alarm) VALUES (:timestamp, :distance, :alarm)");
     query.bindValue(":timestamp", timestamp);
-    query.bindValue(":message", message);
+    query.bindValue(":distance", distance);
+    query.bindValue(":alarm", alarm);
 
     if (query.exec()) {
         // Log successfully inserted into the database
